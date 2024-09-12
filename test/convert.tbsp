@@ -1,0 +1,85 @@
+%top {
+	#include <stdio.h>
+
+	//#define TBDEBUG 1
+	#define print puts
+
+	int depth = 0;
+}
+%language markdown
+%%
+
+enter section {
+    depth += 1;
+}
+leave section {
+    depth -= 1;
+}
+
+enter atx_heading {
+    printf("<h%d>\n", depth);
+}
+leave atx_heading {
+    printf("</h%d>\n", depth);
+}
+
+enter paragraph {
+    print("<p>");
+}
+leave paragraph {
+    print("</p>\n");
+}
+
+enter list {
+    print("<ol>");
+}
+leave list {
+    print("</ol>\n");
+}
+
+enter list_item {
+    print("<li>");
+}
+leave list_item {
+    print("</li>\n");
+}
+
+enter fenced_code_block {
+    print("<pre>");
+}
+leave fenced_code_block {
+    print("</pre>\n");
+}
+
+enter inline {
+    print(tbtext);
+}
+enter code_fence_content {
+    print(tbtext);
+}
+
+%%
+// @BAKE g++ $@ $(pkg-config --cflags --libs tree-sitter) -ltree-sitter-markdown -ggdb
+
+signed main(int argc, char * * argv) {
+	FILE* f = fopen(argv[1], "r");
+
+	fseek(f, 0, SEEK_END);
+	int flen = ftell(f);
+	rewind(f);
+	char fstr[flen+1];
+	fstr[flen] = '\00';
+	fread(fstr, flen, sizeof(char), f);
+
+	fclose(f);
+
+	printf("-- meta: %d chars\n", flen);
+
+    print("<html>\n");
+    print("<body>\n");
+
+	tbtraverse(fstr);
+
+    print("</body>\n");
+    print("</html>\n");
+}
