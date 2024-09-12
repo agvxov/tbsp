@@ -1,5 +1,5 @@
 # TBSP
-> Tree-Based Source-processing Language
+> Tree-Based Source-Processing language
 
 ## Notes
 I stole the idea from here:
