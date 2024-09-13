@@ -82,7 +82,7 @@ enter leave a { <...> }
  * The reason something like this could be useful is because
  *  if such queries are performed by hand, they can easily segv if not checked,
  *  however, because of the required checking they are very non-ergonomic.
- * For error handinding say something this could be employed:
+ * For error handling, say something this could be employed:
  *   enter a { ; } catch { ; }
  * Where 'catch' could be implemented as a goto.
  * I am unsure whether this would be too generic to be useful or not.
