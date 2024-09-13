@@ -52,17 +52,29 @@ leave fenced_code_block {
 }
 
 enter inline {
-    print(tbtext);
+    char * text = GET_TBTEXT;
+    print(text);
+    free(text);
 }
 enter code_fence_content {
-    print(tbtext);
+    char * text = GET_TBTEXT;
+    print(text);
+    free(text);
 }
 
 %%
-// @BAKE g++ $@ $(pkg-config --cflags --libs tree-sitter) -ltree-sitter-markdown -ggdb
+// @BAKE g++ -o $*.out $@ $(pkg-config --cflags --libs tree-sitter) -ltree-sitter-markdown -ggdb
 
 signed main(int argc, char * * argv) {
+    if (argc < 2) {
+        return 1;
+    }
+
 	FILE* f = fopen(argv[1], "r");
+
+    if (!f) {
+        return 2;
+    }
 
 	fseek(f, 0, SEEK_END);
 	int flen = ftell(f);
