@@ -1,8 +1,33 @@
 #include <stdio.h>
 #include <string.h>
-extern "C" {
-    #include <tree_sitter/api.h>
-    extern const TSLanguage * tree_sitter_c(void);
+
+#include <tree_sitter/api.h>
+extern const TSLanguage * tree_sitter_c(void);
+
+typedef struct {
+	const char * const string;
+	const int case_number;
+} tbcase_t;
+
+const tbcase_t tb_enter_cases[] = {
+	(tbcase_t) { .string = "function_definition", .case_number = 1 },
+	(tbcase_t) { .string = "number_literal", .case_number = 2 },
+	(tbcase_t) { .string = NULL, .case_number = 0 },
+};
+
+const tbcase_t tb_leave_cases[] = {
+	(tbcase_t) { .string = "function_definition", .case_number = 3 },
+	(tbcase_t) { .string = NULL, .case_number = 0 },
+};
+
+// XXX better search algo
+int determine_case(tbcase_t * ordered_array, const char * const string) {
+	tbcase_t * c;
+	for (; c->string != NULL; c++) {
+		if (!strcmp(c->string, string)) { break; }
+	}
+
+	return c->case_number;
 }
 
 int tbtraverse(const char * const code) {
@@ -13,6 +38,8 @@ int tbtraverse(const char * const code) {
     TSNode current_node;
     TSNode previous_node;
 
+	int tb_case;
+
     parser = ts_parser_new();
 
     ts_parser_set_language(parser, tree_sitter_c());
@@ -22,71 +49,51 @@ int tbtraverse(const char * const code) {
     current_node = ts_tree_root_node(tree);
 
     // meat
-    do {
+	while (true) {
         current_node = ts_tree_cursor_current_node(&cursor);
-
-		const char * previous_node_type = NULL;
 
 		int tblen = ts_node_end_byte(current_node) - ts_node_start_byte(current_node);
 		char * tbtext = (char *)malloc(sizeof(char) * (tblen + 1));
 		memcpy(tbtext, code + ts_node_start_byte(current_node), tblen);
 		tbtext[tblen] = '\0';
 
+		tb_case = determine_case(tb_enter_cases, ts_node_type(current_node));
+
 		// XXX INJECTION
-		
-        if (!strcmp("function_definition", ts_node_type(current_node))) {
-			
-			puts("ack");
-			puts(tbtext);
-
-			goto end;
-        }
-
-
-        if (!strcmp("number_literal", ts_node_type(current_node))) {
-			
-			puts("++");
-
-			goto end;
-        }
-
-
-
-	  end:
-		free(tbtext);
-    } while ([&] {
-		bool r = false;
-		previous_node = current_node;
-
-        if (ts_tree_cursor_goto_first_child(&cursor)
-        ||  ts_tree_cursor_goto_next_sibling(&cursor)) {
-            r = true;
-			goto eval;
-        }
-		
-		while (ts_tree_cursor_goto_parent(&cursor)) {
-			if (!strcmp(ts_node_type(current_node), "translation_unit")) {
-				r = false;
-				break;
-			}
-
-			if (ts_tree_cursor_goto_next_sibling(&cursor)) {
-				r = true;
-			}
-
-		  eval:
-			if (!strcmp("function_definition", ts_node_type(previous_node))) {
+	  eval:
+		switch (tb_case) {
+			case 1: {
+				puts("ack");
+				puts(tbtext);
+			} break;
+			case 2: {
+				puts("++");
+			} break;
+			case 3: {
 				puts("^^df");
-
-				goto end;
-			}
-
-		  end:
-			if (r) { break; }
+			} break;
+			[[likely]] default: { ; } break;
 		}
 
-		return r;
-    }());
+		free(tbtext);
+
+        if (ts_tree_cursor_goto_first_child(&cursor)
+		||  ts_tree_cursor_goto_next_sibling(&cursor)) {
+			current_node = ts_tree_cursor_current_node(&cursor);
+			tb_case = determine_case(tb_leave_cases, ts_node_type);
+			goto eval;
+		}
+
+        while (ts_tree_cursor_goto_parent(&cursor)) {
+			current_node = ts_tree_cursor_current_node(&cursor);
+            if (ts_tree_cursor_goto_next_sibling(&cursor)) {
+				tb_case = determine_case(tb_leave_cases, ts_node_type);
+				goto eval;
+            }
+		}
+
+		break;
+	}
 
     // deinit
     ts_tree_delete(tree);
@@ -102,4 +109,3 @@ int tbtraverse(const char * const code) {
 signed main() {
     tbtraverse("int main() { return 0; }");
 }
-
