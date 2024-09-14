@@ -41,8 +41,7 @@ Modelled half after the original, half after Flex/Bison.
 
 ### Rule section
 ```
-enter <node-type> { <...> } // code to run when tree-sitter node-type <node-type> is encountered
-close <node-type> { <...> } // code to run when tree-sitter node-type <node-type> is poped from
+[enter|close]+ <node-type> { <...> } // code to run when tree-sitter node-type <node-type> is encountered/popped from
 ```
 
 ### Code
@@ -53,28 +52,19 @@ int tbtraverse(const char * const code);    // master function; rules are evalua
 ```
 #### In tbtraverse
 ```C
-char * tbtext;   // copy of the current nodes text value (not ts_node_string); XXX: this could be much optimized
-int tblen;       // string lenght of tbtext
+GET_TBTEXT;      // macro that returns a `char *` to the current node's text value (not ts_node_string); its the programmers responsibility to free() it
+int tblen;       // string lenght of tbtext; XXX probably broken?
 // XXX: these should probably be renamed
-TSNode current_node;    // node corresponding to the rule in enter rules
-TSNode previous_node;   // node corresponding to the rule in close rules
+TSNode current_node;    // node corresponding to the rule
+// XXX need a macro bool for leave/enter
 ```
-
-### TODO
-+ port "backend" to C (from C++)
-+ port from python (can wait)
-  - optimize the allocation of tbtext
-  - optimize from strcmp()
 
 ### Thinking area
 ```C
 // This should be allowed to mean 'a' or 'b'
 enter a b { <...> }
 
-// This should be allowed to mean 'enter' or 'leave'
-enter leave a { <...> }
-
-// In node type blobbing should probably be allowed, however regex sounds like overkill
+// In the node type, blobbing should probably be allowed, however regex sounds like overkill
 
 /* A query language should also exist
  *   $0-><name>
