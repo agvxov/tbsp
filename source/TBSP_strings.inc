@@ -70,11 +70,11 @@ int tbtraverse(const char * const code) {\n\
 \n\
         tb_case = determine_case(current_cases, ts_node_type(current_node));\n\
 \n\
-        // XXX INJECTION\n\
       #if defined(TBDEBUG) && TBDEBUG == 1\n\
         puts(ts_node_string(current_node));\n\
       #endif\n\
         switch (tb_case) {\n\
+            // XXX INJECTION\n\
 ";
 
 const char * const TBSP_traverse_bottom = "\
