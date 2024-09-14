@@ -20,9 +20,6 @@ but for DSL-es in general.
 This project will heavy depend on tree-sitter,
 there is no sense pretending otherwise with decoupling.
 
-The current implementation (in python) is obviously terrible.
-It does work however.
-
 ## Language semantics
 Modelled half after the original, half after Flex/Bison.
 ```
