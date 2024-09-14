@@ -36,10 +36,10 @@ ${OUT}: ${GENSOURCE} ${GENOBJECT} ${OBJECT} ${LIBS}
 	${LINK.c} -o $@ ${OBJECT} ${GENOBJECT} ${LIBS}
 
 ${OBJECT.d}/%.yy.c: ${SOURCE.d}/%.l
-	flex ${LFLAGS} -o $@ $<
+	flex --header-file=object/$(basename $(notdir $<)).yy.h ${LFLAGS} -o $@ $<
 
 ${OBJECT.d}/%.tab.c: ${SOURCE.d}/%.y
-	bison ${YFLAGS} -o $@ $<
+	bison ${YFLAGS} --header=object/$(basename $(notdir $<)).tab.h -o $@ $<
 
 ${OBJECT.d}/%.yy.o: ${OBJECT.d}/%.yy.c
 	${COMPILE.c} -o $@ $<
