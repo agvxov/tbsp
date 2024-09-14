@@ -8,7 +8,7 @@ I stole the idea from here:
 Now, there are some obvious problems with this project:
 + its written in rust
 + it tries to be a general purpose language for no reason
-+ >"[ ] bytecode VM?"; serious?
++ >"[ ] bytecode VM?"; seriously?
 
 I have tried contacting the owner, the response is pending.
 
