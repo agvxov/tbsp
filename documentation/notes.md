@@ -25,12 +25,7 @@ enter a b { <...> }
 
 // In the node type, blobbing should probably be allowed, however regex sounds like overkill
 
-/* A query language should also exist
- *   $0-><name>
- * Where <name> is the named field of the rules node.
- * The reason something like this could be useful is because
- *  if such queries are performed by hand, they can easily segv if not checked,
- *  however, because of the required checking they are very non-ergonomic.
+/* Checked queries should be supported too.
  * For error handling, say something this could be employed:
  *   enter a { ; } catch { ; }
  * Where 'catch' could be implemented as a goto.
