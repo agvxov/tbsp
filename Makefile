@@ -12,7 +12,7 @@ OBJECT    := ${OBJECT:.c=.o}
 LIBS      := sds.o
 LIBS      := $(addprefix ${OBJECT.d}/,${LIBS})
 
-GENSOURCE := tbsp.yy.c tbsp.tab.c
+GENSOURCE := tbsp.yy.c tbsp_c.yy.c tbsp.tab.c
 GENSOURCE := $(addprefix ${OBJECT.d}/,${GENSOURCE})
 GENOBJECT := $(subst .c,.o,${GENSOURCE})
 
@@ -54,9 +54,12 @@ ${OBJECT.d}/%.o: ${LIB.d}/%.c
 	${COMPILE.c} -o $@ $<
 
 run:
-	./${OUT} test/convert.tbsp > object/test.cpp
-	bake object/test.cpp
-	./object/test.out test/input.md
+	#./${OUT} test/convert.tbsp > object/test.cpp
+	#bake object/test.cpp
+	#./object/test.out test/input.md
+	./${OUT} test/function_collector.cpp.tbsp > object/function_collector.cpp
+	bake object//function_collector.cpp
+	./object/function_collector.out object//function_collector.cpp
 
 clean:
 	-rm ${GENSOURCE}

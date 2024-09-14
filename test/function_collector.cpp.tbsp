@@ -1,0 +1,44 @@
+%top {
+    #include <stdio.h>
+    #include <string>
+    #include <set>
+
+    using namespace std;
+
+    set<string> functions;
+}
+%language cpp
+%%
+
+enter function_definition {
+    char * name = GET_TBTEXT_FROM_NODE($$->declarator->declarator);
+    functions.insert(name);
+    free(name);
+}
+
+%%
+
+// @BAKE g++ $@ -o $*.out $(pkg-config --cflags --libs tree-sitter tree-sitter-cpp)
+
+signed main(int argc, char * * argv) {
+    if (argc < 2) {
+        return 1;
+    }
+
+	FILE* f = fopen(argv[1], "r");
+	fseek(f, 0, SEEK_END);
+	int flen = ftell(f);
+	rewind(f);
+	char fstr[flen+1];
+	fstr[flen] = '\00';
+	fread(fstr, flen, sizeof(char), f);
+	fclose(f);
+
+    tbtraverse(fstr);
+
+    for (const auto &i : functions) {
+        puts(i.c_str());
+    }
+
+    return 0;
+}

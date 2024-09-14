@@ -16,11 +16,12 @@ identifier [a-zA-z][-a-zA-z0-9_]*
 
 %option nodefault
 %option noyywrap
+%option nounput noinput
 %%
 .   { yyless(0); BEGIN IN_DEFINITION_SECTION; }
 
 <IN_DEFINITION_SECTION>{
-\%top[[:space:]]+\{     {
+\%top[[:space:]]*\{     {
                             code_caller = IN_DEFINITION_SECTION;
                             BEGIN IN_CODE;
                             return TOP;
@@ -37,6 +38,9 @@ identifier [a-zA-z][-a-zA-z0-9_]*
                             BEGIN IN_RULE_SECTION;
                             return SEPARATOR;
                         }
+.                       {
+                            yyerror("unknown shit");
+                        }
 }
 
 <IN_RULE_SECTION>{
@@ -45,7 +49,7 @@ identifier [a-zA-z][-a-zA-z0-9_]*
                         BEGIN IN_CODE;
                     }
 \}                  { ; }
-[[:space:]]*        { ; }
+([[:space:]]|\n)*   { ; }
 enter[[:space:]]    { return ENTER; }
 leave[[:space:]]    { return LEAVE; }
 {identifier}        {
@@ -81,6 +85,7 @@ leave[[:space:]]    { return LEAVE; }
                     return CODE_BLOB;
                 }
 }
+
 %%
 
 int tbsp_yy_init(void) {

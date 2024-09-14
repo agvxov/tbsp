@@ -77,11 +77,14 @@ rule_section
 
 rule
     : rule_type rule_selector CODE_BLOB {
+        extern char * tbsp_c_expland_code(const char * const s);
+        char * code_blob_expanded = strdup(tbsp_c_expland_code($3));
+
         kv_push(rule_t, rules, (rule_t) {
             .type   = $1 COMA
             .target = target_counter COMA
             .string = $2 COMA
-            .code   = $3 COMA
+            .code   = code_blob_expanded COMA
         });
         ++target_counter;
     }
@@ -103,13 +106,12 @@ code_section
         verbatim = $1;
     }
     ;
-
 %%
 
 rule_vector_t rules;
 
 void yyerror(const char * const s) {
-    puts("yyerror");
+    printf("error: %s", s);
 }
 
 void tbsp_tab_init(void) {

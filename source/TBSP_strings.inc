@@ -38,6 +38,7 @@ char * tbtext(const char * const code, TSNode node) {\n\
 }\n\
 \n\
 #define GET_TBTEXT tbtext(code, current_node)\n\
+#define GET_TBTEXT_FROM_NODE(n) tbtext(code, n)\n\
 ";
 
 const char * const TBSP_case = "\
