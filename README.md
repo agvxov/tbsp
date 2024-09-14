@@ -34,7 +34,6 @@ int tbtraverse(const char * const code);    // master function; rules are evalua
 ```C
 GET_TBTEXT;              // macro that returns a `char *` to the current node's text value (not ts_node_string); its the programmers responsibility to free() it
 GET_TBTEXT_FROM_NODE(x); // macro that returns a `char *` to the passed in node's text value (not ts_node_string); its the programmers responsibility to free() it
-int tblen;       // string lenght of tbtext; XXX probably broken?
 // XXX: these should probably be renamed
 TSNode current_node;    // node corresponding to the rule
 // XXX need a macro bool for leave/enter
