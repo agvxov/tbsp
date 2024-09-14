@@ -11,7 +11,7 @@
 %%
 
 enter function_definition {
-    char * name = GET_TBTEXT_FROM_NODE($$->declarator->declarator);
+    char * name = GET_TBTEXT_FROM_NODE($$->"declarator"->"declarator");
     functions.insert(name);
     free(name);
 }

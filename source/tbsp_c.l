@@ -8,6 +8,7 @@
 
     kvec_t(char *) query;
     static sds buffer;
+    static sds query_string_buffer;
 
     #define ECHOC(x) do { buffer = sdscatlen(buffer, &x, 1); } while(0)
     #define ECHOS(x) do { buffer = sdscat(buffer, x); } while(0)
@@ -17,7 +18,7 @@
 identifier [a-zA-z][a-zA-z0-9_]*
 
 %x IN_COMMENT IN_MULTILINE_COMMENT IN_STRING
-%x IN_QUERY
+%x IN_QUERY IN_QUERY_STRING
 
 %option nodefault
 %option noyywrap
@@ -81,6 +82,11 @@ identifier [a-zA-z][a-zA-z0-9_]*
 {identifier}    {
                     kv_push(char *, query, strdup(yytext));
                 }
+\"              {
+                    sdsfree(query_string_buffer);
+                    query_string_buffer = sdsnew(yytext);
+                    BEGIN IN_QUERY_STRING;
+                }
 .               {
                     char * expanded_query = expand_c_query();
                     ECHOS(expanded_query);
@@ -92,11 +98,23 @@ identifier [a-zA-z][a-zA-z0-9_]*
                 }
 }
 
+<IN_QUERY_STRING>{
+\"              {
+                    query_string_buffer = sdscat(query_string_buffer, yytext);
+                    kv_push(char *, query, strdup(query_string_buffer));
+                    BEGIN IN_QUERY;
+                }
+.               {
+                    query_string_buffer = sdscat(query_string_buffer, yytext);
+                }
+}
+
 %%
 
 char * tbsp_c_expland_code(const char * const s) {
     kv_init(query);
     buffer = sdsnew("");
+    query_string_buffer = sdsnew("");
 
 	YY_BUFFER_STATE const b = yy_scan_string(s);
     tbsp_c_lex();
@@ -107,7 +125,7 @@ char * tbsp_c_expland_code(const char * const s) {
 
 // XXX this bleeds
 char * expand_c_query(void) {
-    const char * const query_fmt = "ts_node_child_by_field_name(%s, \"%s\", strlen(\"%s\"))";
+    const char * const query_fmt = "ts_node_child_by_field_name(%s, %s, strlen(%s))";
     char * r;
 
     r = (char *)"current_node";
