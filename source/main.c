@@ -20,6 +20,8 @@
 
 extern int tbsp_yy_init(void);
 extern int tbsp_yy_deinit(void);
+extern int tbsp_c_yy_init(void);
+extern int tbsp_c_yy_deinit(void);
 
 char * language = NULL;
 char * verbatim = NULL;
@@ -107,6 +109,7 @@ signed main(const int argc, const char * const * const argv) {
 
     tbsp_yy_init();
     tbsp_tab_init();
+    tbsp_c_yy_init();
 
     CHECKED_FOPEN(yyin,  input_file_name,  "r");
     CHECKED_FOPEN(yyout, output_file_name, "w");
@@ -123,6 +126,7 @@ signed main(const int argc, const char * const * const argv) {
     }
 
     tbsp_yy_deinit();
+    tbsp_c_yy_deinit();
     free(output_file_name);
     free(input_file_name);
     free(verbatim);

@@ -94,6 +94,7 @@ int tbsp_yy_init(void) {
 }
 
 int tbsp_yy_deinit(void) {
+    yy_delete_buffer(YY_CURRENT_BUFFER);
     sdsfree(buffer);
     return 0;
 }

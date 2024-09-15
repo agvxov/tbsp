@@ -114,10 +114,6 @@ identifier [a-zA-z][a-zA-z0-9_]*
 %%
 
 char * tbsp_c_expland_code(const char * const s) {
-    kv_init(query);
-    buffer = sdsnew("");
-    query_string_buffer = sdsnew("");
-
 	YY_BUFFER_STATE const b = yy_scan_string(s);
     tbsp_c_lex();
 	tbsp_c__delete_buffer(b);
@@ -136,4 +132,18 @@ char * expand_c_query(void) {
     }
 
     return r;
+}
+
+int tbsp_c_yy_init(void) {
+    kv_init(query);
+    buffer = sdsnew("");
+    query_string_buffer = sdsnew("");
+    return 0;
+}
+
+int tbsp_c_yy_deinit(void) {
+    tbsp_c__delete_buffer(YY_CURRENT_BUFFER);
+    sdsfree(buffer);
+    sdsfree(query_string_buffer);
+    return 0;
 }
