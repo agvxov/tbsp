@@ -57,7 +57,7 @@ definition_section
 top
     : TOP CODE_BLOB {
         if (top) {
-            puts("error: reee");
+            yyerror("multiple %%top statements found, but only one is allowed");
             return 1;
         }
         top = $2;
