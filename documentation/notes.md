@@ -31,4 +31,6 @@ enter a b { <...> }
  * Where 'catch' could be implemented as a goto.
  * I am unsure whether this would be too generic to be useful or not.
  */
+
+// the symbol prefix should be user changable
 ```
