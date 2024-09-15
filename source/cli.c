@@ -53,7 +53,7 @@ int handle_arguments(const int argc, const char * const * const argv) {
                 puts(help_message);
             } exit(0);
             case 'o': {
-                output_file_name = optarg;
+                output_file_name = strdup(optarg);
             } break;
             default: {
                 yyerror("unknown option '%s'", argv[optind]);
