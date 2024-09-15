@@ -102,30 +102,19 @@ void dump_output(void) {
     fputs(verbatim, yyout);
 }
 
-signed main(const int argc, const char * const * const argv) {
-  #ifdef DEBUG
-    yydebug = 1;
-  #endif
-
-    if (handle_arguments(argc, argv)) { return 1; }
-
+static inline
+void init(void) {
     tbsp_yy_init();
     tbsp_tab_init();
     tbsp_c_yy_init();
+}
 
-    CHECKED_FOPEN(yyin,  input_file_name,  "r");
-
-    int yyparse_r = yyparse();
-    if (yyparse_r) { return yyparse_r; }
-
-    dump_output();
-
-    // Deinit
+static inline
+void deinit(void) {
     for (int i = 0; i < kv_size(rules); i++) {
         free(kv_A(rules, i).string);
         free(kv_A(rules, i).code);
     }
-
     tbsp_yy_deinit();
     tbsp_c_yy_deinit();
     free(output_file_name);
@@ -133,8 +122,27 @@ signed main(const int argc, const char * const * const argv) {
     free(verbatim);
     free(language);
     free(top);
+}
+
+signed main(const int argc, const char * const * const argv) {
+  #ifdef DEBUG
+    yydebug = 1;
+  #endif
+
+    if (handle_arguments(argc, argv)) { return 1; }
+
+    init();
+
+    CHECKED_FOPEN(yyin,  input_file_name,  "r");
+
+    int yyparse_r = yyparse();
+    if (yyparse_r) { return yyparse_r; }
+
     CHECKED_FOPEN(yyout, output_file_name, "w");
 
+    dump_output();
+
+    deinit();
 
     return 0;
 }
