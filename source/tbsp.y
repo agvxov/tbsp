@@ -77,7 +77,9 @@ rule_section
 
 rule
     : rule_type rule_selector CODE_BLOB {
+        extern int tbsp_c_yy_reset(void);
         extern char * tbsp_c_expland_code(const char * const s);
+
         char * code_blob_expanded = strdup(tbsp_c_expland_code($3));
 
         kv_push(rule_t, rules, (rule_t) {
@@ -86,7 +88,10 @@ rule
             .string = $2 COMA
             .code   = code_blob_expanded COMA
         });
+
         ++target_counter;
+
+        tbsp_c_yy_reset();
     }
     ;
 

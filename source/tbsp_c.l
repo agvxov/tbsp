@@ -37,6 +37,7 @@ identifier [a-zA-z][a-zA-z0-9_]*
                 BEGIN IN_COMMENT;
             }
 \"          {
+                ECHOS(yytext);
                 BEGIN IN_STRING;
             }
 \$\$        {
@@ -140,6 +141,12 @@ int tbsp_c_yy_init(void) {
     kv_init(query);
     buffer = sdsnew("");
     query_string_buffer = sdsnew("");
+    return 0;
+}
+
+int tbsp_c_yy_reset(void) {
+    sdsclear(buffer);
+    sdsclear(query_string_buffer);
     return 0;
 }
 
