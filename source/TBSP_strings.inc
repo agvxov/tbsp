@@ -25,7 +25,7 @@ typedef struct {\n\
 } tbcase_t;\n\
 \n\
 // XXX better search algo\n\
-int determine_case(const tbcase_t * const ordered_array, const char * const string) {\n\
+int tbdetermine_case(const tbcase_t * const ordered_array, const char * const string) {\n\
     const tbcase_t * c = ordered_array;\n\
     for (; c->string != NULL; c++) {\n\
         if (!strcmp(c->string, string)) { break; }\n\
@@ -44,8 +44,8 @@ char * tbtext(const char * const code, TSNode node) {\n\
     return r;\n\
 }\n\
 \n\
-#define GET_TBTEXT tbtext(code, current_node)\n\
-#define GET_TBTEXT_FROM_NODE(n) tbtext(code, n)\n\
+#define GET_TBTEXT tbtext(code, tbnode)\n\
+#define GET_TBTEXT_FROM_NODE(n) tbtext(tbcode, n)\n\
 ";
 
 const char * const TBSP_case = "\
@@ -53,35 +53,35 @@ const char * const TBSP_case = "\
 ";
 
 const char * const TBSP_traverse_top = "\
-int tbtraverse(const char * const code) {\n\
+int tbtraverse(const char * const tbcode) {\n\
     // init\n\
-    TSParser * parser;\n\
-    TSTree * tree;\n\
-    TSTreeCursor cursor;\n\
-    TSNode current_node;\n\
+    TSParser * tbparser;\n\
+    TSTree * tbtree;\n\
+    TSTreeCursor tbcursor;\n\
+    TSNode tbnode;\n\
 \n\
-    int tb_case;\n\
+    int tbcase;\n\
 \n\
-    parser = ts_parser_new();\n\
+    tbparser = ts_parser_new();\n\
 \n\
-    ts_parser_set_language(parser, tblanguage_function());\n\
+    ts_parser_set_language(tbparser, tblanguage_function());\n\
 \n\
-    tree = ts_parser_parse_string(parser, NULL, code, strlen(code));\n\
-    cursor = ts_tree_cursor_new(ts_tree_root_node(tree));\n\
-    current_node = ts_tree_root_node(tree);\n\
+    tbtree = ts_parser_parse_string(tbparser, NULL, tbcode, strlen(tbcode));\n\
+    tbcursor = ts_tree_cursor_new(ts_tree_root_node(tbtree));\n\
+    tbnode = ts_tree_root_node(tbtree);\n\
 \n\
-    const tbcase_t * current_cases = tb_enter_cases;\n\
+    const tbcase_t * tbcurrent_cases = tbenter_cases;\n\
 \n\
     // meat\n\
     while (true) {\n\
-        current_node = ts_tree_cursor_current_node(&cursor);\n\
-\n\
-        tb_case = determine_case(current_cases, ts_node_type(current_node));\n\
-\n\
+        tbnode = ts_tree_cursor_current_node(&tbcursor);\n\
       #if defined(TBDEBUG) && TBDEBUG == 1\n\
-        puts(ts_node_string(current_node));\n\
+        puts(ts_node_string(tbnode));\n\
       #endif\n\
-        switch (tb_case) {\n\
+\n\
+        tbcase = tbdetermine_case(tbcurrent_cases, ts_node_type(tbnode));\n\
+\n\
+        switch (tbcase) {\n\
             // XXX INJECTION\n\
 ";
 
@@ -89,41 +89,41 @@ const char * const TBSP_traverse_bottom = "\
                     default: { ; } break;\n\
         }\n\
 \n\
-        if (ts_node_child_count(current_node)\n\
-        &&  current_cases == tb_enter_cases) {\n\
-            ts_tree_cursor_goto_first_child(&cursor);\n\
+        if (ts_node_child_count(tbnode)\n\
+        &&  tbcurrent_cases == tbenter_cases) {\n\
+            ts_tree_cursor_goto_first_child(&tbcursor);\n\
             continue;\n\
         }\n\
 \n\
-      logic:\n\
-        if (!ts_node_is_null(ts_node_next_sibling(current_node))) {\n\
-            if (current_cases == tb_enter_cases) {\n\
-                current_cases = tb_leave_cases;\n\
+      tblogic:\n\
+        if (!ts_node_is_null(ts_node_next_sibling(tbnode))) {\n\
+            if (tbcurrent_cases == tbenter_cases) {\n\
+                tbcurrent_cases = tbleave_cases;\n\
                 continue;\n\
             } else {\n\
-                ts_tree_cursor_goto_next_sibling(&cursor);\n\
-                current_cases = tb_enter_cases;\n\
+                ts_tree_cursor_goto_next_sibling(&tbcursor);\n\
+                tbcurrent_cases = tbenter_cases;\n\
                 continue;\n\
             }\n\
         }\n\
 \n\
-        if (current_cases == tb_enter_cases) {\n\
-            current_cases = tb_leave_cases;\n\
+        if (tbcurrent_cases == tbenter_cases) {\n\
+            tbcurrent_cases = tbleave_cases;\n\
             continue;\n\
         }\n\
 \n\
-        if (ts_tree_cursor_goto_parent(&cursor)) {\n\
-            current_cases = tb_enter_cases;\n\
-            goto logic;\n\
+        if (ts_tree_cursor_goto_parent(&tbcursor)) {\n\
+            tbcurrent_cases = tbenter_cases;\n\
+            goto tblogic;\n\
         }\n\
 \n\
         break;\n\
     }\n\
 \n\
     // deinit\n\
-    ts_tree_delete(tree);\n\
-    ts_parser_delete(parser);\n\
-    ts_tree_cursor_delete(&cursor);\n\
+    ts_tree_delete(tbtree);\n\
+    ts_parser_delete(tbparser);\n\
+    ts_tree_cursor_delete(&tbcursor);\n\
 \n\
     return 0;\n\
 }\n\

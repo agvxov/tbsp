@@ -44,7 +44,7 @@ void put_rule_table(const char * const name, rule_type_t type_mask) {
     char * sprint_buffer;
     int sprint_r;
     (void)sprint_r;
-    fputs("const tbcase_t tb_", yyout);
+    fputs("const tbcase_t tb", yyout);
     fputs(name, yyout);
     fputs("[] = {\n", yyout);
     for (int i = 0; i < kv_size(rules); i++) {

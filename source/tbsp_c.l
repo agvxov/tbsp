@@ -126,7 +126,7 @@ char * expand_c_query(void) {
     const char * const query_fmt = "ts_node_child_by_field_name(%s, %s, strlen(%s))";
     char * r;
 
-    r = (char *)"current_node";
+    r = (char *)"tbnode";
     for (int i = 0; i < kv_size(query); i++) {
         asprintf(&r, query_fmt, r, kv_A(query, i), kv_A(query, i));
     }
