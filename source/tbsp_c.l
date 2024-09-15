@@ -95,6 +95,8 @@ identifier [a-zA-z][a-zA-z0-9_]*
                     ECHOS(expanded_query);
                     free(expanded_query);
 
+                    query.n = 0;
+
                     ECHOS(yytext);
 
                     BEGIN INITIAL;
