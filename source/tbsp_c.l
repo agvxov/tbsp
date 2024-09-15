@@ -121,15 +121,16 @@ char * tbsp_c_expland_code(const char * const s) {
     return buffer;
 }
 
-// XXX this bleeds
 char * expand_c_query(void) {
     const char * const query_fmt = "ts_node_child_by_field_name(%s, %s, strlen(%s))";
     char * r;
 
-    r = (char *)"tbnode";
+    r = strdup("tbnode");
     for (int i = 0; i < kv_size(query); i++) {
+        char * old = r;
         int ignore = asprintf(&r, query_fmt, r, kv_A(query, i), kv_A(query, i));
         (void)ignore;
+        free(old);
     }
 
     return r;
