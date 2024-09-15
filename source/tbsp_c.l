@@ -128,7 +128,8 @@ char * expand_c_query(void) {
 
     r = (char *)"tbnode";
     for (int i = 0; i < kv_size(query); i++) {
-        asprintf(&r, query_fmt, r, kv_A(query, i), kv_A(query, i));
+        int ignore = asprintf(&r, query_fmt, r, kv_A(query, i), kv_A(query, i));
+        (void)ignore;
     }
 
     return r;
