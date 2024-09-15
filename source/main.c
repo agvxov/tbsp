@@ -73,7 +73,9 @@ void dump_output(void) {
     free(sprint_buffer);
 
     // Definition section
-    fputs(top, yyout);
+    if (top) {
+        fputs(top, yyout);
+    }
    
     // Rule section
     dump_rule_table("enter_cases", ENTER_RULE);
