@@ -49,6 +49,15 @@ document
     ;
 
 definition_section
+    : definition_section_primitive {
+        if (!language) {
+            yyerror("no %%language statement found, but a language is required");
+            return 1;
+        }
+    }
+    ;
+
+definition_section_primitive
     : %empty
     | top definition_section
     | language definition_section
