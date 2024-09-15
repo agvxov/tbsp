@@ -5,7 +5,7 @@ SOURCE.d  := source
 OBJECT.d  := object
 LIB.d     := library/
 
-SOURCE    := main.c
+SOURCE    := main.c cli.c
 OBJECT    := $(addprefix ${OBJECT.d}/,${SOURCE})
 OBJECT    := ${OBJECT:.c=.o}
 

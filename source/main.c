@@ -1,11 +1,22 @@
 #define _GNU_SOURCE
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "tbsp.yy.h"
 #include "tbsp.tab.h"
 
+#include "cli.h"
+
 // XXX i am so desperate for #embed, you would not believe
 #include "TBSP_strings.inc"
+
+#define CHECKED_FOPEN(target, filename, mode) do {\
+    target = fopen(filename, mode);\
+    if (!target) {\
+        yyerror("failed to open '%s'", filename);\
+        return 1;\
+    }\
+} while (0)
 
 extern int tbsp_yy_init(void);
 extern int tbsp_yy_deinit(void);
@@ -26,6 +37,7 @@ void yyerror(const char * const fmt, ...) {
     va_end(args);
 }
 
+static
 void put_rule_table(const char * const name, rule_type_t type_mask) {
     char * sprint_buffer;
     int sprint_r;
@@ -47,32 +59,8 @@ void put_rule_table(const char * const name, rule_type_t type_mask) {
     fputs("};\n\n", yyout);
 }
 
-signed main(const int argc, const char * const * const argv) {
-  #ifdef DEBUG
-    yydebug = 1;
-  #endif
-
-    if (argc < 2) {
-        printf("%s <file>", argv[0]);
-    }
-
-    tbsp_yy_init();
-    tbsp_tab_init();
-
-    yyin = fopen(argv[1], "r");
-    if (!yyin) {
-        puts("Failed to open file");
-        return 1;
-    }
-
-    //yyout = fopen("tbsp.c", "w");
-    yyout = stdout;
-
-    int yyparse_r = yyparse();
-    if (yyparse_r) {
-        return 1;
-    }
-
+static
+void put_output(void) {
     char * sprint_buffer;
     int sprint_r;
     (void)sprint_r;
@@ -108,6 +96,25 @@ signed main(const int argc, const char * const * const argv) {
 
     // Code section
     fputs(verbatim, yyout);
+}
+
+signed main(const int argc, const char * const * const argv) {
+  #ifdef DEBUG
+    yydebug = 1;
+  #endif
+
+    if (handle_arguments(argc, argv)) { return 1; }
+
+    tbsp_yy_init();
+    tbsp_tab_init();
+
+    CHECKED_FOPEN(yyin,  input_file_name,  "r");
+    CHECKED_FOPEN(yyout, output_file_name, "w");
+
+    int yyparse_r = yyparse();
+    if (yyparse_r) { return yyparse_r; }
+
+    put_output();
 
     // Deinit
     for (int i = 0; i < kv_size(rules); i++) {
@@ -116,6 +123,8 @@ signed main(const int argc, const char * const * const argv) {
     }
 
     tbsp_yy_deinit();
+    free(output_file_name);
+    free(input_file_name);
     free(verbatim);
     free(language);
     free(top);
