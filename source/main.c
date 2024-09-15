@@ -40,7 +40,7 @@ void yyerror(const char * const fmt, ...) {
 }
 
 static
-void put_rule_table(const char * const name, rule_type_t type_mask) {
+void dump_rule_table(const char * const name, rule_type_t type_mask) {
     char * sprint_buffer;
     int sprint_r;
     (void)sprint_r;
@@ -62,7 +62,7 @@ void put_rule_table(const char * const name, rule_type_t type_mask) {
 }
 
 static
-void put_output(void) {
+void dump_output(void) {
     char * sprint_buffer;
     int sprint_r;
     (void)sprint_r;
@@ -76,8 +76,8 @@ void put_output(void) {
     fputs(top, yyout);
    
     // Rule section
-    put_rule_table("enter_cases", ENTER_RULE);
-    put_rule_table("leave_cases", LEAVE_RULE);
+    dump_rule_table("enter_cases", ENTER_RULE);
+    dump_rule_table("leave_cases", LEAVE_RULE);
 
     fputs(TBSP_traverse_top, yyout);
     for (int i = 0; i < kv_size(rules); i++) {
@@ -117,7 +117,7 @@ signed main(const int argc, const char * const * const argv) {
     int yyparse_r = yyparse();
     if (yyparse_r) { return yyparse_r; }
 
-    put_output();
+    dump_output();
 
     // Deinit
     for (int i = 0; i < kv_size(rules); i++) {
