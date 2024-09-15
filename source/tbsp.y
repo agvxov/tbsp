@@ -1,8 +1,6 @@
 %{
     #include "tbsp.yy.h"
 
-    void yyerror(const char * const s, ...);
-
     extern char * language;
     extern char * top;
     extern char * verbatim;
@@ -27,6 +25,8 @@
     #include <kvec.h>
     typedef kvec_t(rule_t) rule_vector_t;
     extern rule_vector_t rules;
+
+    extern void yyerror(const char * const s, ...);
 }
 %code provides {
     void tbsp_tab_init(void);
