@@ -1,10 +1,12 @@
 # TBSP
 > Tree-Based Source-Processing language
 
-XXX: sort out the name situation
-
 ## Language semantics
-Flex/Bison like.
+TBSP is a DSL which extends a backend language.
+It has a small syntax which was designed after Flex/Bison
+with the goal of reducing noise in programs using tree-sitter.
+
+The only currently supported backend is C/C++.
 ```
 <declaration-section>
 %%
@@ -13,6 +15,25 @@ Flex/Bison like.
 <code-section>
 ```
 
+Example:
+```
+%language c
+%%
+enter translation_unit {
+    puts("Hello World!");
+}
+%%
+// @BAKE tbsp $@; gcc hello_world.tb.c $(pkg-config --libs tree-sitter tree-sitter-c); ./a.out
+signed main(void) {
+    tbtraverse("int i = 0;");
+    return 0;
+}
+```
+The above is a fully functional tbsp program.
+`tbtraverse()` will print `"Hello World!"` given any code.
+
+NOTE: "@BAKE" is this tool here: https://github.com/emilwilliams/bake
+
 ### Declaration section
 ```
 %top { <...> }    // code to be pasted at the top of the source file
@@ -20,8 +41,19 @@ Flex/Bison like.
 ```
 
 ### Rule section
-```
-[enter|leave]+ <node-type> { <...> } // code to run when tree-sitter node-type <node-type> is encountered/popped from
+The rule section is composed of any number of Rules.
+```C
+/* A Rule
+ *   + enter : signals that the rule applies when a node is pushed
+ *   + leave : signals that the rule applies when a node is popped
+ * 'leave' and 'enter' may be specified at the same time,
+ *  the rule fill run on both pushes and pops.
+ * <node-type> is the name of a tree-sitter node type.
+ *  The rule will run only if such node is encountered.
+ * <...> is the code associated with the rule.
+ *  Its provided in the backend language.
+ */
+[enter|leave]+ <node-type> { <...> }
 ```
 
 ### Code
@@ -30,11 +62,17 @@ The code section is verbatim pasted to the end of the output file.
 ```C
 /* Master function.
  * Rules are evaluated inside here.
+ * Returns 0 on normal exit.
  */
-int tbtraverse(const char * const code);    // master function; rules are evaluated here
+int tbtraverse(const char * const code);
 ```
 #### In tbtraverse
 ```C
+/* Rules are guaranteed to be inside tbtraverse(),
+ *  this means that you may return from rules.
+ */
+return 0;
+
 /* Node corresponding to the rule being evaluated
  */
 TSNode tbnode;

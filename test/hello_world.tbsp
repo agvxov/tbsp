@@ -1,0 +1,11 @@
+%language c
+%%
+enter translation_unit {
+    puts("Hello World!");
+}
+%%
+// @BAKE tbsp $@; gcc hello_world.tb.c $(pkg-config --libs tree-sitter tree-sitter-c); ./a.out
+signed main(void) {
+    tbtraverse("int i = 0;");
+    return 0;
+}
