@@ -28,13 +28,31 @@ Flex/Bison like.
 The code section is verbatim pasted to the end of the output file.
 #### Globals
 ```C
+/* Master function.
+ * Rules are evaluated inside here.
+ */
 int tbtraverse(const char * const code);    // master function; rules are evaluated here
 ```
 #### In tbtraverse
 ```C
-GET_TBTEXT;              // macro that returns a `char *` to the current node's text value (not ts_node_string); its the programmers responsibility to free() it
-GET_TBTEXT_FROM_NODE(x); // macro that returns a `char *` to the passed in node's text value (not ts_node_string); its the programmers responsibility to free() it
-// XXX: these should probably be renamed
-TSNode current_node;    // node corresponding to the rule
-// XXX need a macro bool for leave/enter
+/* Node corresponding to the rule being evaluated
+ */
+TSNode tbnode;
+
+/* Macro that returns a `char *` to the tbnode's text value.
+ * Not equivalent to ts_node_string().
+ * Its the programmers responsibility to free() it.
+ */
+char * tbget_text;
+
+/* Macro that returns a `char *` to the x's text value.
+ * Not equivalent to ts_node_string().
+ * Its the programmers responsibility to free() it.
+ */
+char * tbget_node_text(x);
+
+/* Macro signalling whether we are executing as an enter rule.
+ * Could be useful for shared rules.
+ */
+bool tbis_enter;
 ```
