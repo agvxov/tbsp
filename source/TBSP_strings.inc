@@ -44,7 +44,7 @@ char * tbtext(const char * const code, TSNode node) {\n\
     return r;\n\
 }\n\
 \n\
-#define tbget_text tbtext(code, tbnode)\n\
+#define tbget_text tbtext(tbcode, tbnode)\n\
 #define tbget_node_text(n) tbtext(tbcode, n)\n\
 #define tbis_enter (tbcurrent_cases == tbenter_cases)\n\
 ";
