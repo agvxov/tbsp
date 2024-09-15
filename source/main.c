@@ -14,6 +14,18 @@ char * language = NULL;
 char * verbatim = NULL;
 char * top = NULL;
 
+void yyerror(const char * const fmt, ...) {
+    extern int yylineno;
+    va_list args;
+    va_start(args, fmt);
+
+    fprintf(stderr, "%s:%d: error: ", input_file_name, yylineno);
+    vfprintf(stderr, fmt, args);
+    fputc('\n', stderr);
+
+    va_end(args);
+}
+
 void put_rule_table(const char * const name, rule_type_t type_mask) {
     char * sprint_buffer;
     int sprint_r;

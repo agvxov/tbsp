@@ -1,7 +1,7 @@
 %{
     #include "tbsp.yy.h"
 
-    void yyerror([[maybe_unused]] const char * const s);
+    void yyerror(const char * const s, ...);
 
     extern char * language;
     extern char * top;
@@ -109,10 +109,6 @@ code_section
 %%
 
 rule_vector_t rules;
-
-void yyerror(const char * const s) {
-    printf("error: %s", s);
-}
 
 void tbsp_tab_init(void) {
     kv_init(rules);
