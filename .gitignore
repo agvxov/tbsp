@@ -3,3 +3,5 @@
 object/
 tbsp
 *.tb.*
+tmp-cmdtest-1/
+.cmdtest-filter

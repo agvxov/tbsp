@@ -1,4 +1,4 @@
-.PHONY: main run clean
+.PHONY: main test clean
 
 # --- Paths / files
 SOURCE.d  := source
@@ -53,13 +53,8 @@ ${OBJECT.d}/%.o: ${SOURCE.d}/%.c
 ${OBJECT.d}/%.o: ${LIB.d}/%.c
 	${COMPILE.c} -o $@ $<
 
-run:
-	#./${OUT} test/convert.tbsp > object/test.cpp
-	#bake object/test.cpp
-	#./object/test.out test/input.md
-	./${OUT} test/function_collector.cpp.tbsp > object/function_collector.cpp
-	bake object//function_collector.cpp
-	./object/function_collector.out object//function_collector.cpp
+test: ${OUT}
+	cmdtest --fast
 
 clean:
 	-rm ${GENSOURCE}
