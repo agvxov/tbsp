@@ -114,7 +114,6 @@ signed main(const int argc, const char * const * const argv) {
     tbsp_c_yy_init();
 
     CHECKED_FOPEN(yyin,  input_file_name,  "r");
-    CHECKED_FOPEN(yyout, output_file_name, "w");
 
     int yyparse_r = yyparse();
     if (yyparse_r) { return yyparse_r; }
@@ -134,6 +133,8 @@ signed main(const int argc, const char * const * const argv) {
     free(verbatim);
     free(language);
     free(top);
+    CHECKED_FOPEN(yyout, output_file_name, "w");
+
 
     return 0;
 }
