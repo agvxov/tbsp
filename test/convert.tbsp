@@ -1,9 +1,6 @@
 %top {
 	#include <stdio.h>
 
-	//#define TBDEBUG 1
-	#define print puts
-
 	int depth = 0;
 }
 %language markdown
@@ -24,41 +21,41 @@ leave atx_heading {
 }
 
 enter paragraph {
-    print("<p>");
+    printf("<p>");
 }
 leave paragraph {
-    print("</p>\n");
+    printf("</p>\n");
 }
 
 enter list {
-    print("<ol>");
+    printf("<ol>");
 }
 leave list {
-    print("</ol>\n");
+    printf("</ol>\n");
 }
 
 enter list_item {
-    print("<li>");
+    printf("<li>");
 }
 leave list_item {
-    print("</li>\n");
+    printf("</li>\n");
 }
 
 enter fenced_code_block {
-    print("<pre>");
+    printf("<pre>");
 }
 leave fenced_code_block {
-    print("</pre>\n");
+    printf("</pre>\n");
 }
 
 enter inline {
-    char * text = GET_TBTEXT;
-    print(text);
+    char * text = tbget_text;
+    printf(text);
     free(text);
 }
 enter code_fence_content {
-    char * text = GET_TBTEXT;
-    print(text);
+    char * text = tbget_text;
+    printf(text);
     free(text);
 }
 
@@ -87,11 +84,11 @@ signed main(int argc, char * * argv) {
 
 	printf("-- meta: %d chars\n", flen);
 
-    print("<html>\n");
-    print("<body>\n");
+    printf("<html>\n");
+    printf("<body>\n");
 
 	tbtraverse(fstr);
 
-    print("</body>\n");
-    print("</html>\n");
+    printf("</body>\n");
+    printf("</html>\n");
 }
