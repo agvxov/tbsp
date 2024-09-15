@@ -24,3 +24,23 @@ class CMDTEST_master_batch < Cmdtest::Testcase
     end
   end
 end
+
+class CMDTEST_error_batch < Cmdtest::Testcase
+  def test_double_top
+    import_file "test/double_top.tbsp", "./"
+
+    cmd "tbsp double_top.tbsp" do
+      stderr_equal /.*top.*/
+      exit_nonzero
+    end
+  end
+
+  def test_no_language
+    import_file "test/no_language.tbsp", "./"
+
+    cmd "tbsp no_language.tbsp" do
+      stderr_equal /.*language.*/
+      exit_nonzero
+    end
+  end
+end

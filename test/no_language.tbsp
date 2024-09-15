@@ -1,0 +1,7 @@
+%%
+enter translation_unit { ; }
+%%
+
+signed main(void) {
+    return 0;
+}

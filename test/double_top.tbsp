@@ -1,0 +1,9 @@
+%top { /* 1 */ }
+%top { /* 2 */ }
+%language c
+%%
+enter translation_unit { ; }
+%%
+signed main(void) {
+    return 0;
+}
