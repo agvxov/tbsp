@@ -65,6 +65,7 @@ $$(-><selector>)*
 Returns the named field of tbnode based on the selector or
 a null node if no such named field exists.
 Multiple selectors may be chained together.
+E.g. `$$->mycstr->"declarator"`.
 
 ### Code
 The code section is verbatim pasted to the end of the output file.
