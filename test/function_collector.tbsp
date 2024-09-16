@@ -11,7 +11,8 @@
 %%
 
 // this is a comment
-/* so is this */
+/* so is this
+*/
 enter function_definition {
     char * name = tbget_node_text($$->"declarator"->"declarator");
     functions.insert(name);

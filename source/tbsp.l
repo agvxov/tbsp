@@ -58,7 +58,7 @@ leave[[:space:]]    { return LEAVE; }
                         return IDENTIFIER;
                     }
 \/\/                { BEGIN IN_COMMENT; }
-\/\*                { BEGIN IN_COMMENT; }
+\/\*                { BEGIN IN_MULTILINE_COMMENT; }
 \%\%                {
                         BEGIN IN_CODE_SECTION;
                         return SEPARATOR;
@@ -71,7 +71,7 @@ leave[[:space:]]    { return LEAVE; }
 }
 
 <IN_MULTILINE_COMMENT>{
-.           { ; }
+.|\n        { ; }
 \*\/        { BEGIN IN_RULE_SECTION; }
 }
 
