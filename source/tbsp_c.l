@@ -125,13 +125,13 @@ char * tbsp_c_expland_code(const char * const s) {
 }
 
 char * expand_c_query(void) {
-    const char * const query_fmt = "ts_node_child_by_field_name(%s, %s, strlen(%s))";
+    const char * const query_fmt = "tbnode_child_by_field_name(%s, %s)";
     char * r;
 
     r = strdup("tbnode");
     for (int i = 0; i < kv_size(query); i++) {
         char * old = r;
-        int ignore = asprintf(&r, query_fmt, r, kv_A(query, i), kv_A(query, i));
+        int ignore = asprintf(&r, query_fmt, r, kv_A(query, i));
         (void)ignore;
         free(old);
     }
