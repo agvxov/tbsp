@@ -42,19 +42,29 @@ NOTE: "@BAKE" is this tool here: https://github.com/emilwilliams/bake
 
 ### Rule section
 The rule section is composed of any number of Rules.
+
+#### Rules
 ```C
-/* A Rule
- *   + enter : signals that the rule applies when a node is pushed
- *   + leave : signals that the rule applies when a node is popped
- * 'leave' and 'enter' may be specified at the same time,
- *  the rule fill run on both pushes and pops.
- * <node-type> is the name of a tree-sitter node type.
- *  The rule will run only if such node is encountered.
- * <...> is the code associated with the rule.
- *  Its provided in the backend language.
- */
 [enter|leave]+ <node-type> { <...> }
 ```
++ enter: signals that the rule applies when a node is pushed
++ leave: signals that the rule applies when a node is popped
+`leave` and `enter` may be specified at the same time,
+the rule fill run on both pushes and pops.
+
+\<node-type\> is the name of a tree-sitter node type.
+The rule will run only if such node is encountered.
+
+\<...\> is the code associated with the rule.
+Its provided in the backend language.
+
+#### Queries
+```C
+$$(-><selector>)*
+```
+Returns the named field of tbnode based on the selector or
+a null node if no such named field exists.
+Multiple selectors may be chained together.
 
 ### Code
 The code section is verbatim pasted to the end of the output file.
@@ -72,6 +82,12 @@ int tbtraverse(const char * const code);
  *  this means that you may return from rules.
  */
 return 0;
+
+/* Rules are quarenteed to be inside a switch(),
+ *  this means that break can be used to exit a
+ *  rule early
+ */
+break;
 
 /* Node corresponding to the rule being evaluated
  */
