@@ -45,7 +45,7 @@ The rule section is composed of any number of Rules.
 
 #### Rules
 ```C
-[enter|leave]+ <node-type> { <...> }
+[enter|leave]+ <node-type>+ { <...> }
 ```
 + enter: signals that the rule applies when a node is pushed
 + leave: signals that the rule applies when a node is popped
@@ -54,6 +54,8 @@ the rule fill run on both pushes and pops.
 
 \<node-type\> is the name of a tree-sitter node type.
 The rule will run only if such node is encountered.
+Multiple types can be specified which signals an OR relationship.
+Separate them with whitespace.
 
 \<...\> is the code associated with the rule.
 Its provided in the backend language.
