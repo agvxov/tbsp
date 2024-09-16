@@ -14,6 +14,7 @@ leave section {
 }
 
 enter atx_heading {
+    puts("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     printf("<h%d>\n", depth);
 }
 leave atx_heading {
@@ -21,66 +22,57 @@ leave atx_heading {
 }
 
 enter paragraph {
-    printf("<p>");
+    puts("<p>");
 }
 leave paragraph {
-    printf("</p>\n");
+    puts("</p>");
 }
 
 enter list {
-    printf("<ol>");
+    puts("<ol>");
 }
 leave list {
-    printf("</ol>\n");
+    puts("</ol>");
 }
 
 enter list_item {
-    printf("<li>");
+    puts("<li>");
 }
 leave list_item {
-    printf("</li>\n");
+    puts("</li>");
 }
 
 enter fenced_code_block {
-    printf("<pre>");
+    puts("<pre>");
 }
 leave fenced_code_block {
-    printf("</pre>\n");
+    puts("</pre>");
 }
 
 enter inline {
     char * text = tbget_text;
-    printf(text);
+    puts(text);
     free(text);
 }
 enter code_fence_content {
     char * text = tbget_text;
-    printf(text);
+    puts(text);
     free(text);
 }
 
 %%
-// @BAKE g++ -o $*.out $@ $(pkg-config --cflags --libs tree-sitter) -ltree-sitter-markdown -ggdb
+/* @BAKE
+    tbsp $@
+    gcc -o $*.out $*.tb.c $(pkg-config --cflags --libs tree-sitter) -ltree-sitter-markdown -ggdb
+    ./$*.out input.md
+   @STOP
+*/
+
+#include "file2str.h"
 
 signed main(int argc, char * * argv) {
-    if (argc < 2) {
-        return 1;
-    }
-
-	FILE* f = fopen(argv[1], "r");
-
-    if (!f) {
-        return 2;
-    }
-
-	fseek(f, 0, SEEK_END);
-	int flen = ftell(f);
-	rewind(f);
-	char fstr[flen+1];
-	fstr[flen] = '\00';
-	fread(fstr, flen, sizeof(char), f);
-
-	fclose(f);
+    if (argc < 2) { return 1; }
+    FILE2STR(fstr, argv[1]);
 
 	printf("-- meta: %d chars\n", flen);
 

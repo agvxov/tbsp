@@ -19,22 +19,19 @@ enter function_definition {
 }
 
 %%
+/* @BAKE
+    tbsp -o $*.tb.cpp $@
+    g++ -o $*.out $*.tb.cpp $(pkg-config --cflags --libs tree-sitter tree-sitter-cpp) -ggdb
+    ./$*.out $@
+   @STOP
+*/
 
-// @BAKE g++ $@ -o $*.out $(pkg-config --cflags --libs tree-sitter tree-sitter-cpp)
+#include "file2str.h"
 
 signed main(int argc, char * * argv) {
-    if (argc < 2) {
-        return 1;
-    }
+    if (argc < 2) { return 1; }
 
-	FILE* f = fopen(argv[1], "r");
-	fseek(f, 0, SEEK_END);
-	int flen = ftell(f);
-	rewind(f);
-	char fstr[flen+1];
-	fstr[flen] = '\00';
-	fread(fstr, flen, sizeof(char), f);
-	fclose(f);
+    FILE2STR(fstr, argv[1]);
 
     tbtraverse(fstr);
 

@@ -40,7 +40,7 @@ identifier [a-zA-z][-a-zA-z0-9_]*
                             return SEPARATOR;
                         }
 .                       {
-                            yyerror("unknown shit");
+                            yyerror("unknown expression in rule section");
                         }
 }
 
@@ -86,7 +86,6 @@ leave[[:space:]]    { return LEAVE; }
                     }
 
                     --code_nesting;
-                    ;
                 }
 .|\n            { buffer = sdscat(buffer, yytext); }
 }

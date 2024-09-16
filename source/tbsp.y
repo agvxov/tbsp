@@ -1,36 +1,30 @@
 %{
     #include "tbsp.yy.h"
-
-    extern char * language;
-    extern char * top;
-    extern char * verbatim;
+    #include <kvec.h>
 
     int target_counter = 1;
+
+    kvec_t(char *) rule_selectors;
+
+    char * language = NULL;
+    char * verbatim = NULL;
+    char * top = NULL;
 
     #define COMA ,
 %}
 %code requires {
-    typedef enum {
-        ENTER_RULE = 0b0001,
-        LEAVE_RULE = 0b0010,
-    } rule_type_t;
-
-    typedef struct {
-        rule_type_t type;
-        int target;
-        char * string;
-        char * code;
-    } rule_t;
-
-    #include <kvec.h>
-    typedef kvec_t(rule_t) rule_vector_t;
-    extern rule_vector_t rules;
-
+    #include "rule.h"
     extern void yyerror(const char * const s, ...);
 }
 %code provides {
     void tbsp_tab_init(void);
     void tbsp_tab_deinit(void);
+
+    extern rule_vector_t rules;
+
+    extern char * language;
+    extern char * top;
+    extern char * verbatim;
 }
 %union{
     char * strval;
@@ -41,7 +35,6 @@
 %token ENTER LEAVE
 %token<strval> IDENTIFIER CODE_BLOB
 %type<ruleval> rule_type
-%type<strval> rule_selector
 %%
 document
     : %empty
@@ -91,16 +84,22 @@ rule
 
         char * code_blob_expanded = strdup(tbsp_c_expland_code($3));
 
-        kv_push(rule_t, rules, (rule_t) {
-            .type   = $1 COMA
-            .target = target_counter COMA
-            .string = $2 COMA
-            .code   = code_blob_expanded COMA
+        kv_push(code_t, codes, (code_t) {
+            .number = target_counter++ COMA
+            .code = code_blob_expanded COMA
         });
 
-        ++target_counter;
+        for (int i = 0; i < kv_size(rule_selectors); i++) {
+            kv_push(rule_t, rules, (rule_t) {
+                .type       = $1 COMA
+                .string     = kv_A(rule_selectors, i) COMA
+                .code_index = codes.n-1 COMA
+            });
+        }
 
+        rule_selectors.n = 0;
         tbsp_c_yy_reset();
+        free($3);
     }
     ;
 
@@ -111,7 +110,12 @@ rule_type
     ;
 
 rule_selector
-    : IDENTIFIER { $$ = $1; }
+    : IDENTIFIER { 
+        kv_push(char *, rule_selectors, $1);
+    }
+    | IDENTIFIER rule_selector {
+        kv_push(char *, rule_selectors, $1);
+    }
     ;
 
 
@@ -123,16 +127,32 @@ code_section
 %%
 
 rule_vector_t rules;
+code_vector_t codes;
 
 void tbsp_tab_init(void) {
     kv_init(rules);
+    kv_init(codes);
+    kv_init(rule_selectors);
 }
 
 void tbsp_tab_deinit(void) {
+    for (int i = 0; i < kv_size(rule_selectors); i++) {
+        free(kv_A(rule_selectors, i));
+    }
+
+    for (int i = 0; i < kv_size(codes); i++) {
+        free(kv_A(codes, i).code);
+    }
+
     for (int i = 0; i < kv_size(rules); i++) {
         free(kv_A(rules, i).string);
-        free(kv_A(rules, i).code);
     }
 
     kv_destroy(rules);
+    kv_destroy(codes);
+    kv_destroy(rule_selectors);
+
+    free(verbatim);
+    free(language);
+    free(top);
 }

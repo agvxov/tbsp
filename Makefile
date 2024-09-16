@@ -29,7 +29,7 @@ else
 endif
 
 CFLAGS   += -std=c2x -Wall -Wpedantic
-CPPFLAGS += -Iobject -Ilibrary
+CPPFLAGS += -Isource -Iobject -Ilibrary
 
 # --- Rule Section ---
 ${OUT}: ${GENSOURCE} ${GENOBJECT} ${OBJECT} ${LIBS}
@@ -60,3 +60,4 @@ clean:
 	-rm ${GENSOURCE}
 	-rm ${OBJECT}
 	-rm ${OUT}
+	-rm test/*.tb.*

@@ -23,10 +23,6 @@ extern int tbsp_yy_deinit(void);
 extern int tbsp_c_yy_init(void);
 extern int tbsp_c_yy_deinit(void);
 
-char * language = NULL;
-char * verbatim = NULL;
-char * top = NULL;
-
 void yyerror(const char * const fmt, ...) {
     extern int yylineno;
     va_list args;
@@ -52,7 +48,7 @@ void dump_rule_table(const char * const name, rule_type_t type_mask) {
         sprint_r = asprintf(&sprint_buffer,
                                 TBSP_case,
                                 kv_A(rules, i).string,
-                                kv_A(rules, i).target
+                                kv_A(codes, kv_A(rules, i).code_index).number
         );
         fputs(sprint_buffer, yyout);
         free(sprint_buffer);
@@ -82,7 +78,7 @@ void dump_output(void) {
     dump_rule_table("leave_cases", LEAVE_RULE);
 
     fputs(TBSP_traverse_top, yyout);
-    for (int i = 0; i < kv_size(rules); i++) {
+    for (int i = 0; i < kv_size(codes); i++) {
         const char * const case_string = "\
             case %d: {\n\
                 %s\n\
@@ -90,8 +86,8 @@ void dump_output(void) {
         ";
         sprint_r = asprintf(&sprint_buffer,
                                 case_string,
-                                kv_A(rules, i).target,
-                                kv_A(rules, i).code
+                                kv_A(codes, i).number,
+                                kv_A(codes, i).code
         );
         fputs(sprint_buffer, yyout);
         free(sprint_buffer);
@@ -111,17 +107,13 @@ void init(void) {
 
 static inline
 void deinit(void) {
-    for (int i = 0; i < kv_size(rules); i++) {
-        free(kv_A(rules, i).string);
-        free(kv_A(rules, i).code);
-    }
+    fclose(yyin);
+    fclose(yyout);
+    tbsp_tab_deinit();
     tbsp_yy_deinit();
     tbsp_c_yy_deinit();
     free(output_file_name);
     free(input_file_name);
-    free(verbatim);
-    free(language);
-    free(top);
 }
 
 signed main(const int argc, const char * const * const argv) {

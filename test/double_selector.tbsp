@@ -1,0 +1,36 @@
+%language c
+%%
+
+enter function_definition declaration {
+    TSNode declarator = $$->"declarator";
+    TSNode next_declarator = declarator;
+    while (next_declarator = tbnode_child_by_field_name(next_declarator, "declarator"),
+            !ts_node_is_null(next_declarator)) {
+        declarator = next_declarator;
+    }
+
+    char * s = tbget_node_text(declarator);
+    puts(s);
+    free(s);
+}
+
+%%
+/* @BAKE
+    tbsp $@
+    gcc -o $*.out $*.tb.c $(pkg-config --cflags --libs tree-sitter tree-sitter-c) -ggdb
+    ./$*.out $.tb.c
+   @STOP
+*/
+
+#include "file2str.h"
+
+signed main(int argc, char * * argv) {
+    if (argc < 2) { return 1; }
+    FILE2STR(fstr, argv[1]);
+
+    puts(fstr);
+
+    tbtraverse(fstr);
+
+    return 0;
+}
