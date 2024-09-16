@@ -12,6 +12,7 @@
 identifier [a-zA-z][-a-zA-z0-9_]*
 
 %x IN_DEFINITION_SECTION IN_RULE_SECTION IN_CODE_SECTION
+%x IN_COMMENT IN_MULTILINE_COMMENT
 %x IN_CODE
 
 %option nodefault
@@ -56,10 +57,22 @@ leave[[:space:]]    { return LEAVE; }
                         yylval.strval = strdup(yytext);
                         return IDENTIFIER;
                     }
+\/\/                { BEGIN IN_COMMENT; }
+\/\*                { BEGIN IN_COMMENT; }
 \%\%                {
                         BEGIN IN_CODE_SECTION;
                         return SEPARATOR;
                     }
+}
+
+<IN_COMMENT>{
+.               { ; }
+\n              { BEGIN IN_RULE_SECTION; }
+}
+
+<IN_MULTILINE_COMMENT>{
+.           { ; }
+\*\/        { BEGIN IN_RULE_SECTION; }
 }
 
 <IN_CODE>{
