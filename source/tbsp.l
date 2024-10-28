@@ -76,7 +76,10 @@ leave[[:space:]]    { return LEAVE; }
 }
 
 <IN_CODE>{
-\{              { ++code_nesting; }
+\{              {
+                    buffer = sdscat(buffer, yytext);
+                    ++code_nesting;
+                }
 \}              {
                     if (!code_nesting) {
                         yylval.strval = strdup(buffer);
@@ -85,6 +88,7 @@ leave[[:space:]]    { return LEAVE; }
                         return CODE_BLOB;
                     }
 
+                    buffer = sdscat(buffer, yytext);
                     --code_nesting;
                 }
 .|\n            { buffer = sdscat(buffer, yytext); }
