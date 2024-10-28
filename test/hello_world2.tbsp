@@ -1,0 +1,13 @@
+%top{
+    int fun(void) { return 10; }
+}
+%language c
+%%
+enter translation_unit { puts("Hello World!"); }
+%%
+
+// @BAKE tbsp $@; gcc top_function.tb.c $(pkg-config --libs tree-sitter tree-sitter-c); ./a.out
+signed main(void) {
+    tbtraverse("int i = 0;");
+    return 0;
+}

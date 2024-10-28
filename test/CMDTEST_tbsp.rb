@@ -3,6 +3,22 @@ class CMDTEST_master_batch < Cmdtest::Testcase
     import_file "test/file2str.h", "./"
   end
 
+  def test_hw
+    source = "hello_world2"
+
+    import_file "test/#{source}.tbsp", "./"
+
+    cmd "tbsp -o #{source}.tb.c #{source}.tbsp" do
+      created_files ["#{source}.tb.c"]
+    end
+    cmd "gcc -w -o #{source}.out #{source}.tb.c $(pkg-config --cflags --libs tree-sitter tree-sitter-c)" do
+      created_files ["#{source}.out"]
+    end
+    cmd "./#{source}.out" do
+      stdout_equal /.+/
+    end
+  end
+
   def test_converter
     source = "convert"
 
