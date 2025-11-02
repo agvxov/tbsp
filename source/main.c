@@ -7,8 +7,25 @@
 
 #include "cli.h"
 
-// XXX i am so desperate for #embed, you would not believe
-#include "TBSP_strings.inc"
+const char TBSP_header[] = {
+#   embed "TBSP_header.inc"
+    ,'\00'
+};
+
+const char TBSP_case[] = {
+#   embed "TBSP_case.inc"
+    ,'\00'
+};
+
+const char TBSP_traverse_top[] = {
+#   embed "TBSP_traverse_top.inc"
+    ,'\00'
+};
+
+const char TBSP_traverse_bottom[] = {
+#   embed "TBSP_traverse_bottom.inc"
+    ,'\00'
+};
 
 #define CHECKED_FOPEN(target, filename, mode) do {\
     target = fopen(filename, mode);\
