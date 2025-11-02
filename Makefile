@@ -28,7 +28,7 @@ else
   CFLAGS += -O3 -flto=auto -fno-stack-protector
 endif
 
-CFLAGS   += -std=c2x -Wall -Wpedantic
+CFLAGS   += -std=c23 -Wall -Wpedantic
 CPPFLAGS += -Isource -Iobject -Ilibrary
 
 # --- Rule Section ---
