@@ -23,7 +23,7 @@ ifeq (${DEBUG}, 1)
   LFLAGS   += --debug --trace
   YFLAGS   += --debug
   CFLAGS   += -O0 -ggdb -fno-inline
-  CPPFLAGS += -DDEBUG
+  CPPFLAGS += -DDEBUG -D__USE_POSIX
 else
   CFLAGS += -O3 -flto=auto -fno-stack-protector
 endif
