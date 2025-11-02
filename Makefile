@@ -23,13 +23,13 @@ ifeq (${DEBUG}, 1)
   LFLAGS   += --debug --trace
   YFLAGS   += --debug
   CFLAGS   += -O0 -ggdb -fno-inline
-  CPPFLAGS += -DDEBUG -D__USE_POSIX
+  CPPFLAGS += -DDEBUG
 else
   CFLAGS += -O3 -flto=auto -fno-stack-protector
 endif
 
 CFLAGS   += -std=c23 -Wall -Wpedantic
-CPPFLAGS += -Isource -Iobject -Ilibrary
+CPPFLAGS += -D_POSIX_C_SOURCE=1 -Isource -Iobject -Ilibrary
 
 # --- Rule Section ---
 ${OUT}: ${GENSOURCE} ${GENOBJECT} ${OBJECT} ${LIBS}
