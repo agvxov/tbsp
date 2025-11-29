@@ -34,7 +34,7 @@ char * PREFIX(text)(const char * const code, TSNode node) {
     char * r = (char *)malloc(sizeof(char) * (tblen + 1));
 
     memcpy(r, code + ts_node_start_byte(node), tblen);
-    r[tblen] = '0';
+    r[tblen] = '\0';
 
     return r;
 }
