@@ -15,6 +15,7 @@ identifier [a-zA-z][-a-zA-z0-9_]*
 %x IN_COMMENT IN_MULTILINE_COMMENT
 %x IN_CODE
 
+%option yylineno
 %option nodefault
 %option noyywrap
 %option nounput noinput
