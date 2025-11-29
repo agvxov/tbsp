@@ -46,8 +46,14 @@ int handle_arguments(const int argc, const char * const * const argv) {
         return 1;
     }
 
+    static struct option long_opts[] = {
+        {"help", no_argument,         0, 'h'},
+        {"output", required_argument, 0, 'o'},
+        {0, 0, 0, 0}
+    };
+
     int opt;
-    while ((opt = getopt(argc, (char * const *)argv, "ho:")) != -1) {
+    while ((opt = getopt_long(argc, (char * const *)argv, "ho:", long_opts, NULL)) != -1) {
         switch (opt) {
             case 'h': {
                 puts(help_message);
