@@ -142,7 +142,7 @@ signed main(const int argc, const char * const * const argv) {
 
     init();
 
-    CHECKED_FOPEN(yyin,  input_file_name,  "r");
+    CHECKED_FOPEN(yyin, input_file_name,  "r");
 
     int yyparse_r = yyparse();
     if (yyparse_r) { return yyparse_r; }
