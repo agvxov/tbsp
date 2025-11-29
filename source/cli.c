@@ -7,12 +7,14 @@ extern void yyerror(const char * const fmt, ...);
 
 char * output_file_name = NULL;
 char * input_file_name  = NULL;
+const char * prefix     = "tb";
 
 static
 const char * help_message = "\
 tbsp [options] <file>  : convert tbsp source file to C/C++ source file\n\
     -h          : show help\n\
     -o <string> : specify output file\
+    -p <string> : prefix to apply to global symbols instead (default: tb)\n\
 ";
 
 static
@@ -47,8 +49,9 @@ int handle_arguments(const int argc, const char * const * const argv) {
     }
 
     static struct option long_opts[] = {
-        {"help", no_argument,         0, 'h'},
+        {"help",   no_argument,       0, 'h'},
         {"output", required_argument, 0, 'o'},
+        {"prefix", required_argument, 0, 'p'},
         {0, 0, 0, 0}
     };
 
@@ -60,6 +63,9 @@ int handle_arguments(const int argc, const char * const * const argv) {
             } exit(0);
             case 'o': {
                 output_file_name = strdup(optarg);
+            } break;
+            case 'p': {
+                prefix = optarg;
             } break;
             default: {
                 yyerror("unknown option '%s'", argv[optind]);

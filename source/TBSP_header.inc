@@ -12,7 +12,7 @@ extern const TSLanguage * tree_sitter_%s(void);
 #ifdef __cplusplus
 }
 #endif
-const TSLanguage * (*tblanguage_function)(void) = tree_sitter_%s;
+const TSLanguage * (*PREFIX(language_function))(void) = tree_sitter_%s;
 
 typedef struct {
 	const char * const string;
@@ -20,7 +20,7 @@ typedef struct {
 } tbcase_t;
 
 // XXX better search algo
-int tbdetermine_case(const tbcase_t * const ordered_array, const char * const string) {
+int PREFIX(determine_case)(const tbcase_t * const ordered_array, const char * const string) {
     const tbcase_t * c = ordered_array;
     for (; c->string != NULL; c++) {
         if (!strcmp(c->string, string)) { break; }
@@ -29,7 +29,7 @@ int tbdetermine_case(const tbcase_t * const ordered_array, const char * const st
     return c->case_number;
 }
 
-char * tbtext(const char * const code, TSNode node) {
+char * PREFIX(text)(const char * const code, TSNode node) {
     int tblen = ts_node_end_byte(node) - ts_node_start_byte(node);
     char * r = (char *)malloc(sizeof(char) * (tblen + 1));
 
@@ -39,7 +39,7 @@ char * tbtext(const char * const code, TSNode node) {
     return r;
 }
 
-TSNode tbnode_child_by_field_name(TSNode node, const char * const field_name) {
+TSNode PREFIX(node_child_by_field_name)(TSNode node, const char * const field_name) {
     if (ts_node_is_null(node)) {
         return node; // returning a null node without a function call or compounds
     }
@@ -47,6 +47,6 @@ TSNode tbnode_child_by_field_name(TSNode node, const char * const field_name) {
     return ts_node_child_by_field_name(node, field_name, strlen(field_name));
 }
 
-#define tbget_text tbtext(tbcode, tbnode)
+#define tbget_text         tbtext(tbcode, tbnode)
 #define tbget_node_text(n) tbtext(tbcode, n)
-#define tbis_enter (tbcurrent_cases == tbenter_cases)
+#define tbis_enter         (tbcurrent_cases == tbenter_cases)

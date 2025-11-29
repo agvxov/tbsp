@@ -57,7 +57,8 @@ void dump_rule_table(const char * const name, rule_type_t type_mask) {
     char * sprint_buffer;
     int sprint_r;
     (void)sprint_r;
-    fputs("const tbcase_t tb", yyout);
+    fputs("const tbcase_t ", yyout);
+    fputs(prefix, yyout); // XXX
     fputs(name, yyout);
     fputs("[] = {\n", yyout);
     for (int i = 0; i < kv_size(rules); i++) {
@@ -81,6 +82,7 @@ void dump_output(void) {
     (void)sprint_r;
 
     // Header
+    fprintf(yyout, "#define PREFIX(x) %s ## x\n", prefix); // XXX
     sprint_r = asprintf(&sprint_buffer, TBSP_header, language, language);
     fputs(sprint_buffer, yyout);
     free(sprint_buffer);

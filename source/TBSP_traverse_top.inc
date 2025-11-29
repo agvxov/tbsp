@@ -1,4 +1,4 @@
-int tbtraverse(const char * const tbcode) {
+int PREFIX(traverse)(const char * const tbcode) {
     // init
     TSParser * tbparser;
     TSTree * tbtree;
@@ -9,13 +9,13 @@ int tbtraverse(const char * const tbcode) {
 
     tbparser = ts_parser_new();
 
-    ts_parser_set_language(tbparser, tblanguage_function());
+    ts_parser_set_language(tbparser, PREFIX(language_function)());
 
     tbtree = ts_parser_parse_string(tbparser, NULL, tbcode, strlen(tbcode));
     tbcursor = ts_tree_cursor_new(ts_tree_root_node(tbtree));
     tbnode = ts_tree_root_node(tbtree);
 
-    const tbcase_t * tbcurrent_cases = tbenter_cases;
+    const tbcase_t * tbcurrent_cases = PREFIX(enter_cases);
 
     // meat
     while (true) {
@@ -24,7 +24,7 @@ int tbtraverse(const char * const tbcode) {
         puts(ts_node_string(tbnode));
       #endif
 
-        tbcase = tbdetermine_case(tbcurrent_cases, ts_node_type(tbnode));
+        tbcase = PREFIX(determine_case)(tbcurrent_cases, ts_node_type(tbnode));
 
         switch (tbcase) {
             // XXX INJECTION
