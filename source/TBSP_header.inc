@@ -47,6 +47,6 @@ TSNode PREFIX(node_child_by_field_name)(TSNode node, const char * const field_na
     return ts_node_child_by_field_name(node, field_name, strlen(field_name));
 }
 
-#define tbget_text         tbtext(tbcode, tbnode)
-#define tbget_node_text(n) tbtext(tbcode, n)
+#define tbget_text         PREFIX(text(tbcode, tbnode))
+#define tbget_node_text(n) PREFIX(text(tbcode, n))
 #define tbis_enter         (tbcurrent_cases == tbenter_cases)
